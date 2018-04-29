@@ -10,6 +10,8 @@
 #   mv_path.sh ~/all_files ~/movie_files
 #
 #------------------------------------
+read -p "Enter Y if you want to actually move files: " -n 1 -r
+echo
 
 abspath() {
     local thePath
@@ -59,7 +61,7 @@ fi
 dest=$(abspath "$2")
 
 #create target if it doesn't exist
-test -d "$dest" &&  sleep 0 || mkdir "$dest"
+test -d "$dest" &&  sleep 0 || mkdir -p "$dest"
 cd "$source"
 IFS=$'\n'
 files=0
@@ -73,7 +75,6 @@ do
 
   target_dir=$(abspath "$dest/$(dirname $f)")
   target_filename="$source_filename"
-
   if [[ -e "$target_dir/$source_filename.$extension" ]] ; then
     i=1
     while [[ -e "$target_dir/${source_filename}_$i.$extension" ]] ; do
@@ -84,9 +85,11 @@ do
   #echo "$f \n    dir:[$source_dir] \n    filename:[$filename]\n   extension:[$extension] \n    targ:[$target_dir] \n    targ_file:[$target_filename]"
   echo "move '$source_dir/$source_filename.$extension' '$target_dir/$target_filename.$extension'"
 
-  #Uncomment next 2 lines to make the moves...otherwise, this script just shows what it would move.
-  #test -d "${dest}/$(dirname ${f})" &&  sleep 0 || mkdir "$dest/$(dirname $f)"
-  #mv -n $source_dir/$source_filename.$extension $target_dir/$target_filename.$extension
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    test -d "${dest}/$(dirname ${f})" &&  sleep 0 || mkdir -p "$dest/$(dirname $f)"
+    mv -n $source_dir/$source_filename.$extension $target_dir/$target_filename.$extension
+  fi
 
 done
 
